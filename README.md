@@ -56,7 +56,7 @@
 ### 3D建模
 <div align="center">
   <img src="https://img.shields.io/badge/Blender-3.0-E87D0D?style=flat&logo=blender" alt="Blender"/>
-  <img src="https://img.shields.io/badge/实时渲染引擎-Three.js-000000?style=flat" alt="实时渲染引擎"/>
+  <img src="https://img.shields.io/badge/实时渲染引擎-WebGL-000000?style=flat" alt="实时渲染引擎"/>
 </div>
 
 ## 📁 项目结构
