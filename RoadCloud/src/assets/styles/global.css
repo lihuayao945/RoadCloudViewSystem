@@ -1,0 +1,210 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Microsoft YaHei", sans-serif;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background-color: #001529;
+  color: #fff;
+  position: relative;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(4, 34, 53, 0.5);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 145, 234, 0.6);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 145, 234, 0.8);
+}
+
+/* 加载动画 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(2, 12, 32, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.5s;
+}
+
+.loading-spinner {
+  border: 4px solid rgba(0, 145, 234, 0.3);
+  border-top: 4px solid #00ffff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+.loading-text {
+  color: #00ffff;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.panel {
+  background-color: rgba(2, 12, 32, 0.8);
+  border: 1px solid #0e5986;
+  box-shadow: 0 0 15px rgba(0, 145, 234, 0.3);
+  border-radius: 5px;
+  padding: 15px;
+  transition: all 0.5s ease;
+  backdrop-filter: blur(5px);
+  z-index: 100;
+  margin-bottom: 10px;
+  /* 确保面板不会超过视窗宽度 */
+  max-width: 100%;
+}
+
+.chart-title {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #00ffff;
+  border-bottom: 1px solid rgba(14, 89, 134, 0.6);
+  padding-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.refresh-icon {
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 14px;
+  color: rgba(0, 255, 255, 0.7);
+  transition: all 0.3s;
+}
+
+.refresh-icon:hover {
+  color: rgba(0, 255, 255, 1);
+  transform: rotate(180deg);
+}
+
+.tab-controls {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.tab-item {
+  padding: 5px 10px;
+  margin-right: 5px;
+  background-color: rgba(14, 89, 134, 0.3);
+  border: 1px solid rgba(14, 89, 134, 0.6);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s;
+}
+
+.tab-item:hover {
+  background-color: rgba(14, 89, 134, 0.5);
+}
+
+.tab-item.active {
+  background-color: rgba(0, 255, 255, 0.2);
+  border-color: #00ffff;
+  color: #00ffff;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* 确保内容不超过视窗范围 */
+  /* position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto; */
+}
+
+/* 在 global.css 文件末尾添加 */
+
+/* 响应式布局 */
+@media (max-width: 1200px) {
+  .panel {
+    padding: 10px;
+  }
+  
+  .chart-title {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .panel {
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .chart-title {
+    font-size: 13px;
+    padding-bottom: 6px;
+  }
+  
+  .tab-item {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel {
+    padding: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .chart-title {
+    font-size: 12px;
+    padding-bottom: 5px;
+  }
+  
+  .tab-controls {
+    margin-bottom: 5px;
+  }
+  
+  .tab-item {
+    padding: 3px 6px;
+    font-size: 10px;
+    margin-right: 3px;
+  }
+}

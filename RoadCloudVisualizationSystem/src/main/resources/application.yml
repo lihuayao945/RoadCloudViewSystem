@@ -1,0 +1,48 @@
+spring:
+  profiles:
+    active: devyuer
+  cache:
+    type: redis
+  redis:
+    host: localhost
+    port: 6379
+  mqtt:
+    reconnect:
+      max-attempts: 10
+      initial-delay: 5000
+      max-delay: 60000
+  application:
+    name: RoadCloudVisualizationSystem
+  datasource:
+    url: jdbc:mysql://localhost:3306/last1?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+  resources:
+    static-locations: classpath:/static/
+#xlsxs文件保存路径
+file:
+  xlsxssavepath: /static/xlsxs/
+server:
+  port: 8080
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.your.package.model
+  configuration:
+    map-underscore-to-camel-case: true
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+
+exportFilePath: D:/exportFile/
+#  D:/exportFile/
+# /root/exportFile/
+amap:
+  key: 7e6a8cec4c7daa80d13193b373cbcdf0
+

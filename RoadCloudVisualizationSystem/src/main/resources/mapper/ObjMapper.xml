@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.RoadCloudVisualizationSystem.mapper.ObjMapper">
+
+    <resultMap id="BaseResultMap" type="com.RoadCloudVisualizationSystem.entity.Obj">
+            <id property="objsflag" column="objsflag" />
+            <id property="objId" column="objId" />
+            <result property="longitude" column="longitude" />
+            <result property="latitude" column="latitude" />
+            <result property="heading" column="heading" />
+            <result property="speed" column="speed" />
+            <result property="type" column="type" />
+            <result property="plateNo" column="plateNo" />
+            <result property="elevation" column="elevation" />
+            <result property="uuid" column="uuid" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        objsflag,objId,longitude,latitude,heading,speed,type,elevation,plateNo,uuid
+    </sql>
+
+<!--    插入数据-->
+    <insert id="insertObj" parameterType="com.RoadCloudVisualizationSystem.entity.Obj">
+        INSERT INTO obj(uuid,objsflag,longitude,latitude,heading,speed,type,elevation,plateNo,objId)
+        VALUES(#{uuid},#{objsflag},#{longitude},#{latitude},#{heading},#{speed},#{type},#{elevation},#{plateNo},#{objId})
+    </insert>
+
+    <delete id="deleteObjsByRcuId">
+        DELETE FROM obj
+        WHERE objsflag LIKE concat(#{rcuId},'%')
+    </delete>
+
+    <delete id="deleteObjsByObjsflag">
+        DELETE FROM obj
+        WHERE objsflag = #{objsflag}
+    </delete>
+
+    <delete id="deleteObjByObjsflagAndObjId">
+        DELETE FROM obj
+        WHERE objsflag = #{objsflag} AND objId = #{objId}
+    </delete>
+
+    <select id="selectObjsByRcuIdsAndTimeRange" resultType="java.util.Map">
+        SELECT
+        r.rcuId,
+        r.deviceType,
+        o.*
+        FROM
+        obj o
+        JOIN
+        rcu_objs r ON o.objsflag = r.objsflag
+        WHERE
+        r.rcuId IN
+        <foreach collection="rcuIds" item="rcuId" open="(" separator="," close=")">
+            #{rcuId}
+        </foreach>
+        AND r.timestampOfDetOut BETWEEN #{startTime} AND #{endTime}
+    </select>
+
+    <select id="selectObjsByObjsflagsAndTimeRange" resultType="java.util.Map">
+        SELECT
+        r.rcuId,
+        r.deviceType,
+        o.*
+        FROM
+        obj o
+        JOIN
+        rcu_objs r ON o.objsflag = r.objsflag
+        WHERE
+        o.objsflag IN
+        <foreach collection="objsflags" item="objsflag" open="(" separator="," close=")">
+            #{objsflag}
+        </foreach>
+        AND r.timestampOfDetOut BETWEEN #{startTime} AND #{endTime}
+    </select>
+
+
+<!--    根据rcuid和时间范围获取该路口的车辆类型和数量-->
+    <select id="GetPicTwoList" resultType="java.util.Map">
+        SELECT 
+            type,
+            COUNT(*) AS record_count,
+            ROUND(100 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS percentage
+        FROM 
+            obj
+        WHERE 
+            LEFT(objsflag, LOCATE('_', objsflag) - 1) = #{rcuId}
+            AND CAST(SUBSTRING(objsflag, LOCATE('_', objsflag) + 1) AS UNSIGNED) BETWEEN #{startTime} AND #{endTime}
+            AND type BETWEEN 1 AND 8
+        GROUP BY 
+            type
+        ORDER BY 
+            type
+    </select>
+
+    <!--    根据rcuid和时间范围获取车流量-->
+    <select id="GetPicOneList" resultType="java.util.Map">
+        CALL GetTimeSegmentStats(#{rcuId}, #{startTime}, #{endTime}, 50,  1, 8)
+    </select>
+
+    <!--    根据时间范围获取该路口的车辆类型和数量-->
+    <select id="GetPicTwoListAll" resultType="java.util.Map">
+        SELECT
+            type,
+            COUNT(*) AS record_count,
+            ROUND(100 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS percentage
+        FROM obj
+        WHERE
+          CAST(SUBSTRING(objsflag, LOCATE('_', objsflag) + 1) AS UNSIGNED) BETWEEN #{startTime} AND #{endTime}
+          AND type BETWEEN 1 AND 8
+        GROUP BY type
+        ORDER BY type
+    </select>
+
+    <select id="GetPicOneListAll" resultType="java.util.Map">
+        CALL GetTimeSegmentStatsWithOutId(#{startTime}, #{endTime}, 50,  1, 8)
+    </select>
+
+    <select id="getPedestrianAndCarCountByTimestamp" resultType="java.util.Map">
+        SELECT
+            IFNULL(CAST(SUM(CASE WHEN type = '0' THEN 1 ELSE 0 END) AS SIGNED), 0) AS pedestrianCount,
+            IFNULL(CAST(SUM(CASE WHEN type BETWEEN '1' AND '8' THEN 1 ELSE 0 END) AS SIGNED), 0) AS vehicleCount
+        FROM obj
+        WHERE SUBSTRING_INDEX(objsflag, '_', -1) BETWEEN #{startTime} AND #{endTime}
+    </select>
+
+    <select id="getCarTypeAndCountByTimestamp" resultType="java.util.Map">
+        -- 统计所有设备在指定时间范围内的各类型车流量
+        CALL GetTimeSegmentStatsByType(#{startTime}, #{endTime}, 50, 1, 8);
+    </select>
+
+    <select id="getStreamByTimestamp" resultType="java.util.Map">
+        -- 实时分设备统计流量数
+        SELECT rcuId, COUNT(*) AS stream
+        FROM  obj INNER JOIN rcu
+                             ON LEFT(obj.objsflag, LOCATE('_', obj.objsflag) - 1) = rcu.rcuId
+        WHERE CAST(SUBSTRING_INDEX(objsflag, '_', -1) AS UNSIGNED) BETWEEN #{startTime} AND #{endTime}
+        GROUP BY rcuId
+    </select>
+
+
+</mapper>

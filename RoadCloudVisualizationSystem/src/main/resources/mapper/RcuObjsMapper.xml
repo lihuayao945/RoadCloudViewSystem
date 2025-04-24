@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.RoadCloudVisualizationSystem.mapper.RcuObjsMapper">
+
+    <resultMap id="BaseResultMap" type="com.RoadCloudVisualizationSystem.entity.RcuObjs">
+            <id property="objsflag" column="objsflag" />
+            <result property="rcuId" column="rcuId" />
+            <result property="timestampOfDetOut" column="timestampOfDetOut" />
+            <result property="deviceType" column="deviceType" />
+            <result property="objectiveNum" column="objectiveNum" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        objsflag,rcuId,timestampOfDetOut,deviceType,objectiveNum
+    </sql>
+<!--    插入rcuobj数据-->
+    <insert id="insertRcuObjs" parameterType="com.RoadCloudVisualizationSystem.entity.RcuObjs">
+        INSERT INTO rcu_objs (objsflag,rcuId,timestampOfDetOut,deviceType,objectiveNum)
+        VALUES (#{objsflag},#{rcuId},#{timestampOfDetOut},#{deviceType},#{objectiveNum})
+    </insert>
+
+<!--    根据rcuid删除rcuobj信息-->
+    <delete id="deleteRcuByRcuId">
+        DELETE FROM rcu_objs WHERE rcuId = #{rcuId}
+    </delete>
+
+<!--    分页查询所有rcu设备-->
+    <select id="getRcuObjsPageByRcuId" resultType="com.RoadCloudVisualizationSystem.entity.RcuObjs">
+        SELECT DISTINCT
+            rcuId,
+            CONVERT(MAX(deviceType), SIGNED) AS deviceType,
+            CONVERT(MAX(objectiveNum), SIGNED) AS objectiveNum,
+            CONVERT(MAX(objsflag), SIGNED) AS objsflag,
+            MAX(timestampOfDetOut) AS timestampOfDetOut
+        FROM rcu_objs
+        WHERE rcuId LIKE CONCAT('%', #{rcuId}, '%')
+        GROUP BY rcuId
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+<!--    rcuid模糊查询计数-->
+    <select id="countRcu" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT rcuId)
+        FROM rcu_objs
+        WHERE
+            rcuId LIKE concat('%',#{rcuId},'%')
+    </select>
+
+    <select id="getRcuObjsPageByRcuIdAndTime" resultType="com.RoadCloudVisualizationSystem.entity.RcuObjs">
+        SELECT * FROM rcu_objs
+        WHERE
+        rcuId = #{rcuId}
+        AND timestampOfDetOut BETWEEN #{startTime} AND #{endTime}
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countRcuObjsByRcuIdAndTime" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM rcu_objs
+        WHERE
+            rcuId = #{rcuId}
+        AND timestampOfDetOut BETWEEN #{startTime} AND #{endTime}
+    </select>
+
+    <select id="getObjsPageByObjsflag" resultType="com.RoadCloudVisualizationSystem.entity.Obj">
+        SELECT *
+        FROM obj
+        WHERE objsflag = #{objsflag}
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countObjsByObjsflag" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM obj
+        WHERE objsflag = #{objsflag}
+    </select>
+
+    <select id="getRcuObjsByObjsflag" resultType="com.RoadCloudVisualizationSystem.entity.RcuObjs">
+        SELECT *
+        FROM rcu_objs
+        WHERE objsflag = #{objsflag}
+    </select>
+
+</mapper>

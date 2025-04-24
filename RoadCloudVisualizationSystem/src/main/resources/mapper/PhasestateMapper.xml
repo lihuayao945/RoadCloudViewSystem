@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.RoadCloudVisualizationSystem.mapper.PhasestateMapper">
+
+    <resultMap id="BaseResultMap" type="com.RoadCloudVisualizationSystem.entity.Phasestate">
+            <id property="stateflag" column="stateflag" />
+            <result property="intersectionTimestamp" column="intersectionTimestamp" />
+            <result property="phaseId" column="phaseId" />
+            <result property="stateid" column="stateid" />
+            <result property="timeChangeDetails" column="timeChangeDetails" />
+            <result property="light" column="light" />
+            <result property="likelyEndTime" column="likelyEndTime" />
+            <result property="nextDuration" column="nextDuration" />
+            <result property="startTime" column="startTime" />
+            <result property="num" column="num" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        stateflag,intersectionTimestamp,phaseId,stateid,timeChangeDetails,light,
+        likelyEndTime,nextDuration,startTime,num
+    </sql>
+</mapper>

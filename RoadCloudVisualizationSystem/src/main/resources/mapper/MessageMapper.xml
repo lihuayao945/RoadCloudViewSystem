@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.RoadCloudVisualizationSystem.mapper.MessageMapper">
+
+    <resultMap id="BaseResultMap" type="com.RoadCloudVisualizationSystem.entity.Message">
+            <id property="messageId" column="message_id" />
+            <result property="topic" column="topic" />
+            <result property="content" column="content" />
+            <result property="receivedTime" column="received_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        message_id,topic,content,received_time
+    </sql>
+    <insert id="insertMessage">
+        INSERT INTO message (topic,content,received_time)
+        VALUES (#{topic},#{content},#{receivedTime})
+    </insert>
+    <update id="countTotalWithoutTopic">
+        SELECT COUNT(*) FROM message
+        WHERE
+        received_time between #{startTime} AND #{endTime}
+    </update>
+    <select id="findByTimeAndTopic" resultType="com.RoadCloudVisualizationSystem.entity.Message">
+        SELECT <include refid="Base_Column_List"/>
+        FROM message
+        WHERE
+        received_time between #{startTime} AND #{endTime}
+        AND topic LIKE concat('%',#{topic},'%')
+        ORDER BY received_time
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    <select id="countTotal" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM message
+        WHERE
+        received_time between #{startTime} AND #{endTime}
+        AND topic LIKE concat('%',#{topic},'%')
+    </select>
+    <select id="findByTime" resultType="com.RoadCloudVisualizationSystem.entity.Message">
+        SELECT <include refid="Base_Column_List"/>
+        FROM message
+        WHERE
+        received_time between #{startTime} AND #{endTime}
+        ORDER BY received_time
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="findAllByTimeAndTopic" resultType="java.util.Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM message
+        WHERE
+        received_time between #{startTime} AND #{endTime}
+        AND topic LIKE concat('%',#{topic},'%')
+        limit 10000;
+    </select>
+
+    <select id="findAllByTime" resultType="java.util.Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM message
+        WHERE
+        received_time between #{startTime} AND #{endTime}
+        limit 10000;
+    </select>
+
+</mapper>

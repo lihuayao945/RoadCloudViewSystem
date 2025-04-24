@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.RoadCloudVisualizationSystem.mapper.VehicleMapper">
+    <resultMap id="BaseResultMap" type="com.RoadCloudVisualizationSystem.entity.Vehicle">
+            <id property="stateId" column="stateId" />
+            <result property="vehicleId" column="vehicleId" />
+            <result property="timestampGNSS" column="timestampGNSS" />
+            <result property="velocityGNSS" column="velocityGNSS" />
+            <result property="heading" column="heading" />
+            <result property="longitude" column="longitude" />
+            <result property="latitude" column="latitude" />
+            <result property="elevation" column="elevation" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        stateId,vehicleId,timestampGNSS,velocityGNSS,heading,longitude,latitude,elevation
+    </sql>
+
+    <!-- 获取数据库总数据条数 -->
+    <select id="getDataCount" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM vehicle
+    </select>
+
+
+    <!-- 获取分页车辆数据(所有车辆) -->
+    <select id="getVehiclesPage" resultType="java.util.Map">
+        SELECT 
+            v.stateId, 
+            v.vehicleId, 
+            v.timestampGNSS, 
+            v.velocityGNSS, 
+            v.heading, 
+            v.longitude, 
+            v.latitude, 
+            v.elevation
+        FROM vehicle v
+        ORDER BY v.stateId ASC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+
+    <!-- 模糊匹配vehicleId的数据条数 -->
+    <select id="getDataCountByvehicleId" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM vehicle
+        WHERE vehicleId LIKE CONCAT('%', #{vehicleId}, '%')</select>
+
+
+    <!-- 获取分页车辆数据通过vehicleId -->
+    <select id="getVehiclesPageByvehicleId" resultType="java.util.Map">
+        SELECT 
+            v.stateId, 
+            v.vehicleId, 
+            v.timestampGNSS,
+            v.velocityGNSS,
+            v.heading,
+            v.longitude,
+            v.latitude,
+            v.elevation
+        FROM vehicle v
+        WHERE v.vehicleId LIKE CONCAT('%', #{vehicleId}, '%')
+        ORDER BY v.stateId ASC
+        LIMIT #{pageSize} OFFSET #{offset}</select>
+
+
+    <!-- 获取分页车辆数据并通过vehicleId、latestTime分组 -->
+    <select id="getManagevehiclePage" resultType="java.util.Map">
+        SELECT 
+            vehicleId,
+            COUNT(*) AS count,
+            MAX(timestampGNSS) AS latestTime
+        FROM vehicle
+        GROUP BY vehicleId
+        ORDER BY latestTime DESC
+        LIMIT #{pageSize} OFFSET #{offset}</select>
+
+    <!-- 根据stateId删除车辆 -->
+    <delete id="deleteVehicleByStateId">
+        DELETE FROM vehicle WHERE stateId = #{stateId}
+    </delete>
+
+    <!-- 根据vehicleId删除车辆 -->
+    <delete id="deleteVehicleByvehicleId">
+        DELETE FROM vehicle WHERE vehicleId = #{vehicleId}
+    </delete>
+
+
+    <!-- 根据时间范围和vehicleId获取要保存的车辆数据 -->
+    <select id="getExportFileVehicles" resultType="java.util.Map">
+        SELECT 
+            v.stateId,
+            v.vehicleId, 
+            v.timestampGNSS,
+            v.velocityGNSS,
+            v.heading,
+            v.longitude,
+            v.latitude,
+            v.elevation
+        FROM vehicle v
+        WHERE v.vehicleId IN 
+        <foreach collection="savedata" item="vehicleId" open="(" separator="," close=")">
+            #{vehicleId}</foreach>
+        AND v.timestampGNSS BETWEEN #{starttime} AND #{endtime}
+        ORDER BY v.timestampGNSS ASC</select>
+
+
+    <!-- 获取根据vehicleId和时间查询车辆数据的数据总数 -->
+    <select id="getDataCountByvehicleIdAndTime" resultType="java.lang.Integer">
+        SELECT 
+            COUNT(*)
+        FROM vehicle
+        WHERE vehicleId LIKE CONCAT('%', #{vehicleId}, '%')
+        AND timestampGNSS BETWEEN #{starttime} AND #{endtime}
+    </select>
+
+
+    <!-- 根据vehicleId和时间查询车辆数据 -->
+    <select id="getVehiclePageByvehicleIdAndTime" resultType="java.util.Map">
+        SELECT 
+            stateId, 
+            vehicleId, 
+            timestampGNSS,
+            velocityGNSS,
+            heading,
+            longitude,
+            latitude,
+            elevation
+        FROM vehicle
+        WHERE vehicleId LIKE CONCAT('%', #{vehicleId}, '%')
+        AND timestampGNSS BETWEEN #{starttime} AND #{endtime}
+        ORDER BY timestampGNSS DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    
+    <!-- 获取车辆状态信息 -->
+    <select id="getVehicleStatus" resultType="java.util.Map">
+        SELECT
+            v1.vehicleId,
+            COUNT(*) AS count,
+            v2.longitude AS longitude,
+            v2.latitude AS latitude,
+            v2.timestampGNSS AS latestTime
+        FROM
+            vehicle v1
+        LEFT JOIN
+            (SELECT
+                vehicleId,
+                longitude,
+                latitude,
+                timestampGNSS
+             FROM
+                vehicle
+             WHERE
+                vehicleId = #{vehicleId}
+             ORDER BY
+                timestampGNSS DESC
+             LIMIT 1) v2
+        ON
+            v1.vehicleId = v2.vehicleId
+        WHERE
+            v1.vehicleId = #{vehicleId}
+        GROUP BY
+            v1.vehicleId, v2.longitude, v2.latitude, v2.timestampGNSS
+    </select>
+
+    <select id="getVehicleHistoryTrack" resultType="java.util.Map">
+        SELECT longitude, latitude, timestampGNSS
+        FROM vehicle
+        WHERE vehicleId = #{vehicleId}
+        ORDER BY timestampGNSS ASC
+    </select>
+
+
+    <select id="getVehicleSpeedRange" resultType="java.util.Map">
+        CALL sp_get_vehicle_speed_distribution();
+    </select>
+    <select id="getVehicleCount" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT vehicleId) FROM vehicle;
+    </select>
+
+    <select id="getVehicleNewestInfoList" resultType="java.util.Map">
+        WITH ranked_vehicles AS (
+            SELECT vehicleId, timestampGNSS, velocityGNSS,
+                ROW_NUMBER() OVER (PARTITION BY vehicleId ORDER BY CAST(timestampGNSS AS UNSIGNED) DESC) AS rn
+            FROM vehicle
+        )
+        SELECT vehicleId, timestampGNSS,
+            ROUND(CAST(velocityGNSS AS DECIMAL(10,2)) * 3.6, 2) AS velocityKMH, -- 转换为km/h并保留2位小数
+            velocityGNSS AS velocityMS, -- 保留原始m/s值
+            FROM_UNIXTIME(CAST(timestampGNSS AS UNSIGNED)/1000) AS formatted_time
+        FROM ranked_vehicles
+        WHERE rn = 1
+        ORDER BY CAST(timestampGNSS AS UNSIGNED) DESC
+        LIMIT #{limit} OFFSET #{offset};
+    </select>
+
+
+</mapper>

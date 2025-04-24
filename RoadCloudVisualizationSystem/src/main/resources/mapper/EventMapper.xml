@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.RoadCloudVisualizationSystem.mapper.EventMapper">
+
+    <resultMap id="BaseResultMap" type="com.RoadCloudVisualizationSystem.entity.Event">
+            <id property="eventId" column="eventId" />
+            <result property="eventType" column="eventType" />
+            <result property="rcuId" column="rcuId" />
+            <result property="longitude" column="longitude" />
+            <result property="latitude" column="latitude" />
+            <result property="timestamp" column="timestamp" />
+            <result property="targetIdsLen" column="targetIdsLen" />
+            <result property="targetIds" column="targetIds" />
+            <result property="intersectionName" column="intersectionName" />
+            <result property="isView" column="isView" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        eventId,eventType,rcuId,longitude,latitude,timestamp,
+        targetIdsLen,targetIds,intersectionName,isView
+    </sql>
+
+    <update id="updateEventTimestamp">
+        update event
+        set timestamp = #{timestamp}
+    </update>
+
+    <update id="updateIsViewRand">
+        UPDATE event
+        SET isView = FLOOR(RAND() * 2)
+            ORDER BY RAND()
+        LIMIT 3;
+    </update>
+
+    <select id="getEventByIsView" resultType="com.RoadCloudVisualizationSystem.entity.Event">
+        select * from event where isView = 0
+    </select>
+</mapper>

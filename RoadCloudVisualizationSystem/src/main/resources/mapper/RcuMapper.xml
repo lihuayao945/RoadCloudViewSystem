@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.RoadCloudVisualizationSystem.mapper.RcuMapper">
+
+    <resultMap id="BaseResultMap" type="com.RoadCloudVisualizationSystem.entity.Rcu">
+            <id property="rcuId" column="rcuId" />
+            <result property="deviceType" column="deviceType" />
+            <result property="receiveTime" column="receiveTime" />
+            <result property="longitude" column="longitude" />
+            <result property="latitude" column="latitude" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        rcuId,deviceType,receiveTime
+    </sql>
+<!--    插入新的rcu设备-->
+    <insert id="insertRcu">
+        insert into rcu (rcuId,deviceType,receiveTime) values (#{rcuId},#{deviceType},#{receiveTime})
+    </insert>
+
+<!--    更新设备响应时间-->
+    <update id="updateReceiveTimeByRcuId">
+        update rcu set receiveTime=#{receiveTime} where rcuId=#{rcuId}
+    </update>
+
+<!--    保持模拟的设备时间最新-->
+    <update id="updateReceiveTime">
+        update rcu
+        set receiveTime=#{receiveTime}
+        where rcuId in ("D-ZS0013", "D-ZS0144", "E-ZS0013", "E-ZS0014", "F-CP0001")
+    </update>
+
+<!--   根据id获取rcu设备 -->
+    <select id="getRcuByRcuId" resultType="com.RoadCloudVisualizationSystem.entity.Rcu">
+        select * from rcu where rcuId=#{rcuId}
+    </select>
+
+<!--    根据时间戳范围的列表-->
+    <select id="getRcuByReceiveTime" resultType="com.RoadCloudVisualizationSystem.entity.Rcu">
+        select * from rcu
+        where receiveTime between #{startTime} and #{endTime}
+    </select>
+
+    <!--获取设备列表-->
+    <select id="getDeviceNumList" resultType="java.util.Map">
+        select deviceType, count(*) as count
+        from rcu
+        group by deviceType
+    </select>
+
+<!--    获取设备总数量-->
+    <select id="getDeviceCount" resultType="java.lang.Integer">
+        select count(*) from rcu
+    </select>
+
+<!--    分页获取有经纬度的设备列表-->
+    <select id="getDeviceListPage" resultType="com.RoadCloudVisualizationSystem.entity.Rcu">
+        select * from rcu
+        where longitude is not null and latitude is not null
+        limit #{limit} offset #{offset}
+    </select>
+
+<!--    计数-->
+    <select id="getDeviceListCount" resultType="java.lang.Integer">
+        select count(*) from rcu
+        where longitude is not null and latitude is not null
+    </select>
+    <select id="getRcuInfoByRcuId" resultType="java.util.Map">
+        CALL sp_get_rcu_traffic_stats_simple(#{rcuId}, 1);
+    </select>
+
+
+</mapper>

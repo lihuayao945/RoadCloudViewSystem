@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.RoadCloudVisualizationSystem.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.RoadCloudVisualizationSystem.entity.User">
+            <id property="uid" column="uid" />
+            <result property="username" column="username" />
+            <result property="password" column="password" />
+            <result property="authority" column="authority" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        uid,username,password,authority
+    </sql>
+    <insert id="insertUser">
+        insert into user(uid,username,password,authority)
+        values
+        (#{uid,jdbcType=VARCHAR},#{username,jdbcType=VARCHAR},#{password,jdbcType=VARCHAR},#{authority,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateByUid">
+        update user
+        set
+        username = #{username},
+        password = #{password},
+        authority = #{authority}
+        where
+        uid = #{uid}
+    </update>
+    <update id="updateByUidExceptPassword">
+        update user
+        set
+        username = #{username},
+        authority = #{authority}
+        where
+        uid = #{uid}
+    </update>
+
+    <delete id="delByUid">
+        delete from user
+        where
+        uid = #{uid,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="findByUid" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where
+        uid = #{uid,jdbcType=VARCHAR}
+    </select>
+    <select id="findByUsername" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where
+        username = #{username,jdbcType=VARCHAR}
+    </select>
+
+    <!--  分页查询用户信息  -->
+    <select id="findUsersPage" resultType="com.RoadCloudVisualizationSystem.entity.User">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="countUsers" resultType="java.lang.Integer">
+        select count(*) from user
+    </select>
+
+    <!--  根据用户名为过滤条件分页查询用户信息  -->
+    <select id="findUsersByUsernamePage" resultType="com.RoadCloudVisualizationSystem.entity.User">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where
+        username like concat('%',#{username},'%')
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="countUsersByUsername" resultType="java.lang.Integer">
+        select count(*) from user
+        where
+        username like concat('%',#{username},'%')
+    </select>
+    <select id="findAll" resultType="com.RoadCloudVisualizationSystem.entity.User">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+    </select>
+
+
+
+    <sql id="Permission_Column_List">
+        permissionid, url, method, description
+    </sql>
+
+
+    <select id="findPermissionsByUrlAndMethod" resultType="com.RoadCloudVisualizationSystem.entity.Permission">
+        select
+        <include refid="Permission_Column_List"/>
+        from sys_permission
+        where
+        url = #{url,jdbcType=VARCHAR} and method = #{method,jdbcType=VARCHAR}
+    </select>
+
+
+</mapper>

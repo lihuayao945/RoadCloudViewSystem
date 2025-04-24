@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.RoadCloudVisualizationSystem.mapper.RolePermissionMapper">
+  <resultMap id="BaseResultMap" type="com.RoadCloudVisualizationSystem.entity.RolePermission">
+    <id column="rpid" jdbcType="VARCHAR" property="rpid" />
+    <result column="roleid" jdbcType="VARCHAR" property="roleid" />
+    <result column="permissionid" jdbcType="VARCHAR" property="permissionid" />
+    <result column="detail" jdbcType="VARCHAR" property="detail" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    rpid, roleid, permissionid, detail
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_role_permission
+    where rpid = #{rpid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_role_permission
+    where rpid = #{rpid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.RoadCloudVisualizationSystem.entity.RolePermission">
+    insert into sys_role_permission (rpid, roleid, permissionid, 
+      detail)
+    values (#{rpid,jdbcType=VARCHAR}, #{roleid,jdbcType=VARCHAR}, #{permissionid,jdbcType=VARCHAR}, 
+      #{detail,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.RoadCloudVisualizationSystem.entity.RolePermission">
+    insert into sys_role_permission
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="rpid != null">
+        rpid,
+      </if>
+      <if test="roleid != null">
+        roleid,
+      </if>
+      <if test="permissionid != null">
+        permissionid,
+      </if>
+      <if test="detail != null">
+        detail,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="rpid != null">
+        #{rpid,jdbcType=VARCHAR},
+      </if>
+      <if test="roleid != null">
+        #{roleid,jdbcType=VARCHAR},
+      </if>
+      <if test="permissionid != null">
+        #{permissionid,jdbcType=VARCHAR},
+      </if>
+      <if test="detail != null">
+        #{detail,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.RoadCloudVisualizationSystem.entity.RolePermission">
+    update sys_role_permission
+    <set>
+      <if test="roleid != null">
+        roleid = #{roleid,jdbcType=VARCHAR},
+      </if>
+      <if test="permissionid != null">
+        permissionid = #{permissionid,jdbcType=VARCHAR},
+      </if>
+      <if test="detail != null">
+        detail = #{detail,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where rpid = #{rpid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.RoadCloudVisualizationSystem.entity.RolePermission">
+    update sys_role_permission
+    set roleid = #{roleid,jdbcType=VARCHAR},
+      permissionid = #{permissionid,jdbcType=VARCHAR},
+      detail = #{detail,jdbcType=VARCHAR}
+    where rpid = #{rpid,jdbcType=VARCHAR}
+  </update>
+
+
+
+
+
+
+
+    <select id="findRolePermissionsByPermissionid" resultType="com.RoadCloudVisualizationSystem.entity.RolePermission">
+      select *
+      from sys_role_permission
+      where permissionid = #{permissionid,jdbcType=VARCHAR}
+    </select>
+    
+
+
+    <delete id="deleteByPermissionidAndRoleid">
+      delete from sys_role_permission
+      where permissionid = #{permissionid,jdbcType=VARCHAR}
+      and roleid = #{roleid,jdbcType=VARCHAR}
+    </delete>
+
+
+    <select id="getRolePermissionByroleId" resultType="java.util.Map">
+      SELECT 
+        rpid,
+        roleid,
+        permissionid,
+        detail
+      FROM 
+        sys_role_permission
+      WHERE 
+        roleid = #{roleId};
+    </select>
+
+
+
+
+</mapper>

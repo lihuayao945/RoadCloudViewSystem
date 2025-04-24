@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.RoadCloudVisualizationSystem.mapper.PermissionMapper">
+  <resultMap id="BaseResultMap" type="com.RoadCloudVisualizationSystem.entity.Permission">
+    <id column="permissionid" jdbcType="VARCHAR" property="permissionid" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="method" jdbcType="VARCHAR" property="method" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    permissionid, url, method, description
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_permission
+    where permissionid = #{permissionid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_permission
+    where permissionid = #{permissionid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.RoadCloudVisualizationSystem.entity.Permission">
+    insert into sys_permission (permissionid, url, method, 
+      description)
+    values (#{permissionid,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{method,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.RoadCloudVisualizationSystem.entity.Permission">
+    insert into sys_permission
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="permissionid != null">
+        permissionid,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="method != null">
+        method,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="permissionid != null">
+        #{permissionid,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="method != null">
+        #{method,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.RoadCloudVisualizationSystem.entity.Permission">
+    update sys_permission
+    <set>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="method != null">
+        method = #{method,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where permissionid = #{permissionid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.RoadCloudVisualizationSystem.entity.Permission">
+    update sys_permission
+    set url = #{url,jdbcType=VARCHAR},
+      method = #{method,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR}
+    where permissionid = #{permissionid,jdbcType=VARCHAR}
+  </update>
+</mapper>

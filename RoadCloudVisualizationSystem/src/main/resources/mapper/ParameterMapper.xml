@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.RoadCloudVisualizationSystem.mapper.ParameterMapper">
+
+    <resultMap id="BaseResultMap" type="com.RoadCloudVisualizationSystem.entity.Parameter">
+            <id property="id" column="id" />
+            <result property="name" column="name" />
+            <result property="key" column="key" />
+            <result property="value" column="value" />
+            <result property="description" column="description" />
+            <result property="group" column="group" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,key,value,description,group
+    </sql>
+    <insert id="insertParameter">
+        insert into parameter(`name`,`key`,`value`,`description`,`group`) values(#{name},#{key},#{value},#{description},#{group})
+    </insert>
+    <update id="updateParameter">
+        update parameter set `name`=#{name},`key`=#{key},`value`=#{value},`description`=#{description},`group`=#{group} where id=#{id}
+    </update>
+    <delete id="deleteParameter">
+        delete from parameter where id=#{id}
+    </delete>
+
+    <select id="getParameterListPageByGroup" resultType="com.RoadCloudVisualizationSystem.entity.Parameter">
+        select * from parameter
+        where `group` LIKE #{group}
+        ORDER BY id
+        limit #{limit} offset #{offset}
+    </select>
+    <select id="getParameterCountByGroup" resultType="java.lang.Integer">
+        select count(*)
+        from parameter
+        where `group` LIKE #{group}
+    </select>
+</mapper>

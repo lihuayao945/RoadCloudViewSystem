@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.RoadCloudVisualizationSystem.mapper.CreatorMapper">
+  <resultMap id="BaseResultMap" type="com.RoadCloudVisualizationSystem.entity.Creator">
+    <result column="times" jdbcType="VARCHAR" property="times" />
+    <result column="series" jdbcType="VARCHAR" property="series" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="obj_id" jdbcType="VARCHAR" property="obj_id" />
+    <result column="color" jdbcType="VARCHAR" property="color" />
+    <result column="longitude" jdbcType="VARCHAR" property="longitude" />
+    <result column="latitude" jdbcType="VARCHAR" property="latitude" />
+    <result column="elevation" jdbcType="VARCHAR" property="elevation" />
+    <result column="heading" jdbcType="VARCHAR" property="heading" />
+  </resultMap>
+  <insert id="insert" parameterType="com.RoadCloudVisualizationSystem.entity.Creator">
+    insert into creator (times, series, type, 
+      obj_id, color, longitude, 
+      latitude, elevation, heading
+      )
+    values (#{times,jdbcType=VARCHAR}, #{series,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{obj_id,jdbcType=VARCHAR}, #{color,jdbcType=VARCHAR}, #{longitude,jdbcType=VARCHAR}, 
+      #{latitude,jdbcType=VARCHAR}, #{elevation,jdbcType=VARCHAR}, #{heading,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.RoadCloudVisualizationSystem.entity.Creator">
+    insert into creator
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="times != null">
+        times,
+      </if>
+      <if test="series != null">
+        series,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="obj_id != null">
+        obj_id,
+      </if>
+      <if test="color != null">
+        color,
+      </if>
+      <if test="longitude != null">
+        longitude,
+      </if>
+      <if test="latitude != null">
+        latitude,
+      </if>
+      <if test="elevation != null">
+        elevation,
+      </if>
+      <if test="heading != null">
+        heading,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="times != null">
+        #{times,jdbcType=VARCHAR},
+      </if>
+      <if test="series != null">
+        #{series,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="obj_id != null">
+        #{obj_id,jdbcType=VARCHAR},
+      </if>
+      <if test="color != null">
+        #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="longitude != null">
+        #{longitude,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null">
+        #{latitude,jdbcType=VARCHAR},
+      </if>
+      <if test="elevation != null">
+        #{elevation,jdbcType=VARCHAR},
+      </if>
+      <if test="heading != null">
+        #{heading,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="getCreatorListPage" resultType="java.util.Map">
+    SELECT * FROM creator
+    LIMIT #{offset}, #{pageSize}
+  </select>
+
+  <select id="getCreatorListPageByTime" resultType="java.util.Map">
+    SELECT * FROM creator
+    WHERE times BETWEEN #{starttime} AND #{endtime}
+  </select>
+
+</mapper>

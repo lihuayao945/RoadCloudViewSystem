@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.RoadCloudVisualizationSystem.mapper.FrsuMapper">
+
+    <resultMap id="BaseResultMap" type="com.RoadCloudVisualizationSystem.entity.Frsu">
+            <id property="uuid" column="uuid" />
+            <result property="timestamp" column="timestamp" />
+            <result property="msgType" column="msgType" />
+            <result property="rsuId" column="rsuId" />
+            <result property="msgCnt" column="msgCnt" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        uuid,timestamp,msgType,rsuId,msgCnt
+    </sql>
+</mapper>
